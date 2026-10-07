@@ -558,6 +558,30 @@ button {
   background: #08734F;
 }
 
+.owner-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--surface);
+}
+
+.owner-action {
+  flex: 1;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.owner-action.delete {
+  color: var(--accent-dark);
+}
+
 .empty {
   padding: 4px 0;
 }

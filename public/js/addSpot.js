@@ -1,5 +1,7 @@
 // Add a repair spot: add mode, the draft pin, the form, validation, duplicate check and saving.
-import { createSpot } from './api.js';
+// Also handles editing: the same form and pin, pre-filled, PATCHing instead of POSTing.
+import { createSpot, updateSpot } from './api.js';
+import { getOwnerToken, rememberOwner } from './ownership.js';
 import { showDraftPin, clearDraftPin } from './map.js';
 import { findNearby } from './geo.js';
 
@@ -7,6 +9,7 @@ const DUPLICATE_RADIUS_M = 30;
 
 const addButton = document.getElementById('add-button');
 const form = document.getElementById('add-form');
+const formTitle = document.getElementById('form-title');
 const nameInput = document.getElementById('spot-name');
 const vehicleInputs = [...form.querySelectorAll('input[name="vehicle"]')];
 const priceInput = document.getElementById('spot-price');
@@ -29,10 +32,11 @@ let placing = false;
 let point = null;
 let currency = 'KHR';
 let saving = false;
+let editingId = null;
 const touched = new Set();
 let deps;
 
-// deps: { getSpots(), onSaved(spot), showStatus(message), onClosed() }
+// deps: { getSpots(), onSaved(spot), onUpdated(spot), showStatus(message), onClosed() }
 export function initAddSpot(dependencies) {
   deps = dependencies;
 
@@ -74,12 +78,37 @@ export function startAdding() {
   deps.showStatus('Tap the map where the stall is.');
 }
 
+// Called by panel.js when a driver taps Edit on a spot they added.
+export function startEditing(spot) {
+  editingId = spot.id;
+  placing = true;
+  point = { lat: spot.lat, lng: spot.lng };
+  document.body.classList.add('is-adding');
+  addButton.hidden = true;
+  formTitle.textContent = 'Edit repair spot';
+  saveButton.textContent = 'Save changes';
+
+  nameInput.value = spot.name;
+  vehicleInputs.forEach((input) => (input.checked = spot.vehicles.includes(input.value)));
+  setCurrency(spot.price_currency ?? 'KHR');
+  priceInput.value = spot.price_amount ?? '';
+  phoneInput.value = spot.phone ?? '';
+
+  showDraftPin(point);
+  form.hidden = false;
+  deps.showStatus('Tap the map to move the pin, or save as is.');
+  update();
+}
+
 // Cancel: discard everything without saving.
 function stopAdding() {
   placing = false;
   point = null;
+  editingId = null;
   form.reset();
   setCurrency('KHR');
+  formTitle.textContent = 'Add a repair spot';
+  saveButton.textContent = 'Save';
   touched.clear();
   formMessage.textContent = '';
   showDuplicatePrompt(false);
@@ -144,8 +173,11 @@ function update() {
 function trySave() {
   update();
   if (saveButton.disabled) return;
-  const nearby = findNearby(deps.getSpots(), point, DUPLICATE_RADIUS_M);
-  if (nearby.length > 0) return showDuplicatePrompt(true);
+  // Editing a spot would always find itself nearby, so the duplicate check only applies to new ones.
+  if (!editingId) {
+    const nearby = findNearby(deps.getSpots(), point, DUPLICATE_RADIUS_M);
+    if (nearby.length > 0) return showDuplicatePrompt(true);
+  }
   save();
 }
 
@@ -156,30 +188,40 @@ function showDuplicatePrompt(show) {
 
 async function save() {
   const { name, vehicles, price, phone } = readForm();
+  const payload = {
+    name,
+    lat: point.lat,
+    lng: point.lng,
+    vehicles,
+    price_amount: price.amount,
+    price_currency: price.amount === null ? null : currency,
+    phone: phone.value,
+  };
+  const wasEditing = editingId;
   showDuplicatePrompt(false);
   saving = true;
   saveButton.textContent = 'Saving…';
   update();
   try {
-    const saved = await createSpot({
-      name,
-      lat: point.lat,
-      lng: point.lng,
-      vehicles,
-      price_amount: price.amount,
-      price_currency: price.amount === null ? null : currency,
-      phone: phone.value,
-    });
-    saving = false;
-    saveButton.textContent = 'Save';
-    stopAdding();
-    deps.onSaved(saved);
-    deps.showStatus('Spot added', 2500);
+    if (wasEditing) {
+      const saved = await updateSpot(wasEditing, payload, getOwnerToken(wasEditing));
+      saving = false;
+      stopAdding();
+      deps.onUpdated(saved);
+      deps.showStatus('Spot updated', 2500);
+    } else {
+      const { owner_token, ...saved } = await createSpot(payload);
+      rememberOwner(saved.id, owner_token);
+      saving = false;
+      stopAdding();
+      deps.onSaved(saved);
+      deps.showStatus('Spot added', 2500);
+    }
   } catch (error) {
     // Keep everything the driver typed so they can simply try again.
     console.error(error);
     saving = false;
-    saveButton.textContent = 'Save';
+    saveButton.textContent = wasEditing ? 'Save changes' : 'Save';
     formMessage.textContent = "Couldn't save. Try again.";
     update();
   }

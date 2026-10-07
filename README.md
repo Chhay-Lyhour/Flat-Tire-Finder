@@ -13,6 +13,7 @@ Built for moto riders and tuk-tuk drivers first. This is a proof of concept made
 - **Directions:** opens Google Maps with directions to the shop.
 - **Add a repair spot:** no sign-in needed. Name and vehicle types are required, and the price and phone number are optional. A spot within about 30 m of an existing one asks "Add anyway?" first.
 - **Call the repairer:** if a spot has a phone number, a "Call" button sits next to "Directions" so a driver who can't get their vehicle there can ask the repairer to come find them instead.
+- **Edit or delete your own spot:** still no sign-in. The browser that added a spot gets a one-time token back and remembers it, so only that browser sees "Edit"/"Delete" on that spot's card. Clearing the browser's storage, or opening the spot on another device, loses that ability — there are no accounts to recover it with.
 - **Works without location access:** if you deny location, tap the map to set where you are.
 - **Clearly labeled data:** the shops named "Sample:" are illustrative demo data, not real businesses. Spots that drivers add are green and labeled "Added by a driver."
 
@@ -23,7 +24,7 @@ Phone browser (Leaflet map + panel)  ──GET/POST /api/spots──▶  Express
 ```
 
 - The page is plain HTML, CSS and JavaScript. It uses [Leaflet](https://leafletjs.com/) with [OpenStreetMap](https://www.openstreetmap.org/) tiles, so no map API key is needed.
-- The Express server serves the page and two routes: `GET /api/spots` lists every spot, and `POST /api/spots` validates and saves one.
+- The Express server serves the page and `/api/spots`: `GET` lists every spot, `POST` validates and saves one (handing back a one-time owner token), and `PATCH`/`DELETE /api/spots/:id` edit or remove a spot, both requiring that token.
 - Supabase (hosted Postgres) stores the spots. Row Level Security is on with no policies, so only the server, using its secret key, can read or write the table.
 - The browser measures straight-line distances with the haversine formula, then filters by vehicle and sorts.
 
@@ -78,6 +79,7 @@ public/index.html      The single screen
 public/styles.css      Look and feel
 public/js/app.js       Page state, startup, what a map tap means
 public/js/api.js       Calls to /api/spots
+public/js/ownership.js Remembers which spots this browser added, for Edit/Delete
 public/js/location.js  Browser location + tap-to-set fallback
 public/js/map.js       Leaflet map, pins, legend, your position
 public/js/geo.js       Distance, sorting, duplicate check, formatting

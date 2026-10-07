@@ -1,8 +1,9 @@
 // Page state and startup. Every change to the state goes through render().
-import { getSpots } from './api.js';
+import { getSpots, deleteSpot } from './api.js';
 import { createMap, renderSpots, showYou } from './map.js';
-import { initAddSpot, isPlacing, placePin, startAdding } from './addSpot.js';
+import { initAddSpot, isPlacing, placePin, startAdding, startEditing } from './addSpot.js';
 import { initPanel, renderPanel, highlight } from './panel.js';
+import { getOwnerToken, forgetOwner } from './ownership.js';
 import { locateDriver } from './location.js';
 import { nearestFirst } from './geo.js';
 import { initFilter, VEHICLE_NAMES } from './filter.js';
@@ -73,9 +74,23 @@ function handleMapTap(point) {
   }
 }
 
+// Delete flow lives here (not in addSpot.js) since it needs state.spots and api.js directly.
+async function deleteSpotFlow(spot) {
+  try {
+    await deleteSpot(spot.id, getOwnerToken(spot.id));
+    forgetOwner(spot.id);
+    state.spots = state.spots.filter((s) => s.id !== spot.id);
+    render();
+    showStatus('Spot deleted', 2500);
+  } catch (error) {
+    console.error(error);
+    showStatus("Couldn't delete. Try again.", 2500);
+  }
+}
+
 async function start() {
   createMap('map', handleMapTap);
-  initPanel({ onAdd: startAdding });
+  initPanel({ onAdd: startAdding, onEdit: startEditing, onDelete: deleteSpotFlow });
   initFilter({
     initial: state.vehicle,
     onChange: (vehicle) => {
@@ -91,6 +106,10 @@ async function start() {
     getSpots: () => state.spots,
     onSaved: (spot) => {
       state.spots.push(spot);
+      render();
+    },
+    onUpdated: (spot) => {
+      state.spots = state.spots.map((s) => (s.id === spot.id ? spot : s));
       render();
     },
     showStatus,

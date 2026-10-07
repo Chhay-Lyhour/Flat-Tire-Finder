@@ -1,5 +1,6 @@
 // The bottom panel: the nearest-shop card, the other shops by distance, and the expand handle.
 import { formatDistance, formatPrice, directionsUrl } from './geo.js';
+import { isOwned } from './ownership.js';
 
 const VEHICLE_LABELS = { moto: '🏍️ Moto', tuktuk: '🛺 Tuk-tuk', car: '🚗 Car' };
 
@@ -10,9 +11,13 @@ const nearestEl = document.getElementById('nearest');
 const listEl = document.getElementById('shop-list');
 
 let onAddClick;
+let onEditClick;
+let onDeleteClick;
 
-export function initPanel({ onAdd }) {
+export function initPanel({ onAdd, onEdit, onDelete }) {
   onAddClick = onAdd;
+  onEditClick = onEdit;
+  onDeleteClick = onDelete;
   handle.addEventListener('click', () => setExpanded(!panel.classList.contains('expanded')));
 
   // Keep the floating Add button just above the panel, whatever its height.
@@ -97,7 +102,28 @@ function shopEntry(spot, isNearest) {
   bottom.append(links);
   card.append(bottom);
 
+  if (isOwned(spot.id)) card.append(ownerActions(spot));
+
   return card;
+}
+
+// Edit/Delete: only shown on the spot's own browser (see ownership.js) — no accounts needed.
+function ownerActions(spot) {
+  const row = el('div', 'owner-actions');
+
+  const edit = el('button', 'owner-action edit', 'Edit');
+  edit.type = 'button';
+  edit.addEventListener('click', () => onEditClick(spot));
+  row.append(edit);
+
+  const del = el('button', 'owner-action delete', 'Delete');
+  del.type = 'button';
+  del.addEventListener('click', () => {
+    if (window.confirm("Delete this spot? This can't be undone.")) onDeleteClick(spot);
+  });
+  row.append(del);
+
+  return row;
 }
 
 function emptyState(message) {
