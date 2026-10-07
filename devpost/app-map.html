@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlatFinder App Map</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --surface: #F4F5F7;
+    --text: #111418;
+    --muted: #4A5260;
+    --line: #D5D9E0;
+    --accent: #F26A1B;
+    --accent-text: #B54708;
+    --accent-soft: #FFF1E8;
+    --green: #0E9F6E;
+    --code-bg: #F4F5F7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171C;
+      --surface: #1E232A;
+      --text: #EEF1F5;
+      --muted: #A7B0BE;
+      --line: #343B46;
+      --accent: #F5843F;
+      --accent-text: #F8A673;
+      --accent-soft: #2B1D14;
+      --green: #34C38F;
+      --code-bg: #1E232A;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { margin: 0 0 4px; font-size: 30px; }
+  h2 { margin: 40px 0 12px; font-size: 21px; }
+  h3 { margin: 0 0 6px; font-size: 17px; }
+  p { margin: 0 0 12px; }
+  .lede { color: var(--muted); font-size: 17px; }
+  code {
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--code-bg);
+    font: 14px ui-monospace, SFMono-Regular, Menlo, monospace;
+    overflow-wrap: anywhere;
+  }
+  pre {
+    margin: 8px 0 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--code-bg);
+    overflow-x: auto;
+    font: 13.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  pre code { padding: 0; background: none; }
+  .pieces { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .piece { padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; }
+  .piece p { margin: 0; color: var(--muted); font-size: 15px; }
+  figure { margin: 0; }
+  .diagram-wrap { overflow-x: auto; }
+  .diagram { width: 100%; min-width: 600px; height: auto; display: block; }
+  .diagram text { font: 13px system-ui, sans-serif; fill: var(--text); }
+  .diagram .small { font-size: 11.5px; fill: var(--muted); }
+  .diagram .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+  .diagram .box.hot { fill: var(--accent-soft); stroke: var(--accent); }
+  .diagram .arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; marker-end: url(#head); }
+  .diagram #head path { fill: var(--muted); }
+  figcaption { margin-top: 8px; color: var(--muted); font-size: 14px; }
+  ol.route { list-style: none; margin: 0; padding: 0; counter-reset: stop; }
+  ol.route > li {
+    position: relative;
+    margin: 0 0 14px;
+    padding: 14px 16px 14px 56px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    counter-increment: stop;
+  }
+  ol.route > li::before {
+    content: counter(stop);
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #FFFFFF;
+    font-weight: 700;
+    text-align: center;
+    line-height: 28px;
+  }
+  .where { color: var(--muted); font-size: 14.5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .practice { padding: 16px 18px; border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; background: var(--accent-soft); }
+  .practice p:last-child { margin-bottom: 0; }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; color: var(--accent-text); font-weight: 600; }
+  summary:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  a { color: var(--accent-text); }
+  .meta { margin-top: 40px; color: var(--muted); font-size: 14px; }
+  @media (max-width: 520px) {
+    h1 { font-size: 26px; }
+    ol.route > li { padding-left: 50px; }
+    th:nth-child(1), td:nth-child(1) { width: 40%; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>FlatFinder App Map</h1>
+  <p class="lede">A take-home guide to how FlatFinder works and where to start when you want to change something.</p>
+
+  <h2>What it is</h2>
+  <p>FlatFinder shows a driver in Cambodia with a flat tire the nearest repair shop for their vehicle. Drivers can also add roadside stalls that aren't on Google Maps, so the next driver can find them.</p>
+  <div class="pieces">
+    <div class="piece">
+      <h3>The page in the browser</h3>
+      <p>Plain HTML, CSS and JavaScript in <code>public/</code>. A Leaflet map with OpenStreetMap tiles, the vehicle filter, the bottom panel and the add form.</p>
+    </div>
+    <div class="piece">
+      <h3>The Express server</h3>
+      <p><code>server.js</code> and <code>routes/spots.js</code>. Serves the page and two routes: <code>GET</code> and <code>POST /api/spots</code>. Holds the Supabase key.</p>
+    </div>
+    <div class="piece">
+      <h3>Supabase</h3>
+      <p>A hosted Postgres <code>spots</code> table, defined in <code>db/schema.sql</code>. Shared by everyone, so added spots survive a refresh.</p>
+    </div>
+  </div>
+
+  <h2>One action through the code: adding a spot</h2>
+  <figure>
+    <div class="diagram-wrap" tabindex="0" aria-label="Diagram, scroll sideways on small screens">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-labelledby="diagram-title diagram-desc">
+      <title id="diagram-title">What happens when a driver taps Save</title>
+      <desc id="diagram-desc">The driver taps Save. trySave in addSpot.js runs the 30 metre findNearby check from geo.js, then createSpot in api.js posts to the Express route, which runs validateSpot and inserts into Supabase. The saved row comes back, app.js adds it to the list and the map shows a green pin.</desc>
+      <defs>
+        <marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z"/>
+        </marker>
+      </defs>
+
+      <rect class="box" x="10" y="20" width="150" height="56" rx="10"/>
+      <text x="85" y="44" text-anchor="middle">Driver taps Save</text>
+      <text class="small" x="85" y="62" text-anchor="middle">the add form</text>
+
+      <rect class="box hot" x="200" y="20" width="200" height="56" rx="10"/>
+      <text x="300" y="44" text-anchor="middle">trySave()</text>
+      <text class="small" x="300" y="62" text-anchor="middle">public/js/addSpot.js</text>
+
+      <rect class="box hot" x="450" y="20" width="260" height="56" rx="10"/>
+      <text x="580" y="44" text-anchor="middle">findNearby(…, 30) — within 30 m?</text>
+      <text class="small" x="580" y="62" text-anchor="middle">public/js/geo.js · yes → "Add anyway?"</text>
+
+      <rect class="box" x="450" y="120" width="260" height="56" rx="10"/>
+      <text x="580" y="144" text-anchor="middle">createSpot() → POST /api/spots</text>
+      <text class="small" x="580" y="162" text-anchor="middle">public/js/api.js</text>
+
+      <rect class="box" x="200" y="120" width="200" height="56" rx="10"/>
+      <text x="300" y="144" text-anchor="middle">validateSpot() + insert</text>
+      <text class="small" x="300" y="162" text-anchor="middle">routes/spots.js · lib/validateSpot.js</text>
+
+      <rect class="box" x="10" y="120" width="150" height="56" rx="10"/>
+      <text x="85" y="144" text-anchor="middle">Supabase</text>
+      <text class="small" x="85" y="162" text-anchor="middle">spots table</text>
+
+      <rect class="box" x="200" y="224" width="510" height="56" rx="10"/>
+      <text x="455" y="248" text-anchor="middle">Saved row returns → app.js adds it → green pin, list, "Spot added"</text>
+      <text class="small" x="455" y="266" text-anchor="middle">public/js/app.js · map.js renderSpots() · panel.js</text>
+
+      <path class="arrow" d="M160 48 H196"/>
+      <path class="arrow" d="M400 48 H446"/>
+      <path class="arrow" d="M580 76 V116"/>
+      <path class="arrow" d="M450 148 H404"/>
+      <path class="arrow" d="M200 148 H164"/>
+      <path class="arrow" d="M85 176 V252 H196"/>
+    </svg>
+    </div>
+    <figcaption>The orange boxes are the 30 m duplicate check from the route below. On a phone, scroll the diagram sideways.</figcaption>
+  </figure>
+
+  <h2>The route: one requirement from plan to screen</h2>
+  <p>This follows the 30 m duplicate warning from the sentence in the plan to the behavior on screen. Search for each anchor in your editor.</p>
+  <ol class="route">
+    <li>
+      <h3>What was asked for</h3>
+      <p class="where"><code>devpost/prd.md</code> → <em>Adding a Repair Spot</em>. Search: <code>30 m</code></p>
+      <p>The plan names an exact distance and an exact message, "A repair spot is already here. Add anyway?" That turned a vague wish into a pass/fail check.</p>
+    </li>
+    <li>
+      <h3>How it's checked</h3>
+      <p class="where"><code>test/geo.test.js</code>. Search: <code>findNearby: keeps only spots within 30 m</code></p>
+      <p>Spots about 11 m and 28 m away count. One about 400 m away doesn't. <code>npm test</code> re-checks this every time.</p>
+      <details>
+        <summary>Show the test</summary>
+<pre><code>test(&#39;findNearby: keeps only spots within 30 m, nearest first&#39;, () =&gt; {
+  const found = findNearby(spots, { lat: 11.5564, lng: 104.9282 }, 30);
+  assert.deepEqual(found.map((s) =&gt; s.id), [&#39;near&#39;, &#39;edge&#39;]);
+});</code></pre>
+      </details>
+    </li>
+    <li>
+      <h3>Where it happens</h3>
+      <p class="where"><code>public/js/addSpot.js</code>. Search: <code>function trySave</code></p>
+      <p>Save runs the check first. If anything is within <code>DUPLICATE_RADIUS_M</code> (30), the form asks before posting.</p>
+      <details>
+        <summary>Show the code</summary>
+<pre><code>function trySave() {
+  update();
+  if (saveButton.disabled) return;
+  const nearby = findNearby(deps.getSpots(), point, DUPLICATE_RADIUS_M);
+  if (nearby.length &gt; 0) return showDuplicatePrompt(true);
+  save();
+}</code></pre>
+      </details>
+    </li>
+  </ol>
+
+  <h2>To change this, start here</h2>
+  <table>
+    <thead><tr><th>You want to change</th><th>Start here</th></tr></thead>
+    <tbody>
+      <tr><td>The duplicate distance</td><td><code>DUPLICATE_RADIUS_M</code> in <code>public/js/addSpot.js</code>, plus the 30 m test in <code>test/geo.test.js</code></td></tr>
+      <tr><td>Messages like "Spot added"</td><td>Search the text in <code>public/js/addSpot.js</code>, <code>location.js</code> or <code>app.js</code></td></tr>
+      <tr><td>Colors, sizes, fonts</td><td>The variables in <code>:root</code> at the top of <code>public/styles.css</code></td></tr>
+      <tr><td>The vehicle selected at start</td><td><code>vehicle: 'moto'</code> in the <code>state</code> object in <code>public/js/app.js</code></td></tr>
+      <tr><td>The sample shops</td><td><code>SAMPLE_SHOPS</code> in <code>scripts/seed.js</code>, then run <code>npm run seed</code></td></tr>
+      <tr><td>A new vehicle type</td><td>In four places: <code>VEHICLES</code> in <code>lib/validateSpot.js</code>, the check in <code>db/schema.sql</code>, <code>VEHICLE_NAMES</code> in <code>public/js/filter.js</code> and <code>VEHICLE_LABELS</code> in <code>public/js/panel.js</code>, plus a button in <code>index.html</code></td></tr>
+      <tr><td>How "nearest" is worked out</td><td><code>haversineMeters</code> and <code>nearestFirst</code> in <code>public/js/geo.js</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>A practice to reuse</h2>
+  <div class="practice">
+    <p><strong>Write requirements as something you could check on screen, with the exact number and the exact words.</strong></p>
+    <p>In FlatFinder, the PRD line "within about 30 m … shows 'A repair spot is already here. Add anyway?'" became a unit test (<code>test/geo.test.js</code>), a single line of code (<code>trySave</code> in <code>addSpot.js</code>) and a step in the slice 2 hands-on check that passed. Nothing had to be guessed, so the agent built what was asked for the first time.</p>
+    <p>On your next project, before asking an agent to build a feature, write one sentence saying what you'd see when it works, including any numbers and the exact message. Then ask for a test that checks that sentence.</p>
+  </div>
+
+  <h2>Run it again</h2>
+<pre><code>npm install
+npm run seed     # only if the sample shops are missing
+npm start        # then open http://localhost:3000
+npm test         # 18 unit tests</code></pre>
+  <p>You need a <code>.env</code> with <code>SUPABASE_URL</code> and <code>SUPABASE_SECRET_KEY</code>. See <code>README.md</code>.</p>
+
+  <p class="meta">Snapshot of the code at commit <code>999288e</code> (after slice 4). The code may change later, so trust the source if they differ.</p>
+</main>
+</body>
+</html>

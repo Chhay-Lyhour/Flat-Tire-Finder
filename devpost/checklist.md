@@ -41,7 +41,7 @@ Git rule (learner's choice): the agent never runs `git commit` or `git push`. Af
   Learner check: In DevTools Sensors, set the location to 11.5564, 104.9282 and reload. The map should jump there, and the card should show the closest shop with its distance. Tap Directions to open Google Maps. Expand and collapse the panel, and tap a pin to see it highlighted. Then set Sensors to "Location unavailable", reload, and tap the map to set your position.
   Commit: `Show nearest shops sorted by distance with directions`
 
-- [ ] **4. Drivers filter by vehicle, and the app is demo-ready**
+- [x] **4. Drivers filter by vehicle, and the app is demo-ready**
   Becomes usable: The Moto, Tuk-tuk and Car buttons (Moto by default) filter the card, the list and the pins together. "No [vehicle] repair spots near you yet. Add one!" appears when nothing matches. A failed load at startup shows a message with Retry, and the README explains setup and running the app.
   Why now: The filter reshapes the data that slice 3 already shows, so it builds on finished pieces. Polishing and documenting last keeps the project working throughout.
   PRD ref: `prd.md > Vehicle Filter`, `prd.md > States and Boundaries`, `prd.md > Look and Feel`
@@ -54,23 +54,26 @@ Git rule (learner's choice): the agent never runs `git commit` or `git push`. Af
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — after slice 2: the map, sample shops and adding a spot, while there's still time to adjust the rest of the build. Learner ran all six add-flow checks successfully (validation, cancel, save with a green pin that survives refresh, duplicate warning, failed save). Feedback: the look matches, but the buttons should be bigger and the form feels cramped on a phone. This was folded into slice 3.
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration and feedback completed. The learner ran the demo end to end and tried the vehicle filter, awkward inputs and the denied-location path. Everything worked and the look matches. One request: remove the "dfasef" test spot.
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Remove the "dfasef" test spot from Supabase. At the learner's request, only that row was deleted, and 7 sample shops remain, all `is_sample: true`. The learner will confirm in the dashboard.
+- [x] Final review complete — feedback resolved and learner confirms ready to ship
+
+Agent checks before review: `npm test` passes 18 tests. Headless Brave at 390×844 covered allowed location, unavailable location, the vehicle filter, the empty state and failed load with Retry, with no unexpected console errors. Fixes made during slice 4 verification: the load-error message is no longer cleared by the location step, and the favicon 404 is gone.
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence:
-Route and stops:
-Edit outcome:
-Reflection:
-Activity mode:
+Activity and evidence: a guided route tied to the learning goal of writing a plan so the AI builds what you want. It followed one PRD criterion (the 30 m duplicate warning) to its test and code, and to the behavior seen in the slice 2 hands-on check (step 5 passed). The learner reported following all three stops.
+Route and stops: `devpost/prd.md > Adding a Repair Spot` (search `30 m`), then `test/geo.test.js` (`findNearby: keeps only spots within 30 m`), then `public/js/addSpot.js` (`function trySave`, `DUPLICATE_RADIUS_M`).
+Edit outcome: offered (change the "Spot added" text). Not made: `public/js/addSpot.js` is unchanged.
+Reflection: the transfer question was offered after the map.
+Activity mode: live editor, with the app run by the learner during the build.
 
 ## Revisions
 
