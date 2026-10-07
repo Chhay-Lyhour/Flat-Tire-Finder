@@ -31,7 +31,7 @@ Git rule (learner's choice): the agent never runs `git commit` or `git push`. Af
   Learner check: Add a spot by tapping the map, try saving with no name or no vehicle (Save should stay disabled with a message), then save a real one. A green pin and "Spot added" should appear. Refresh, and it's still there. Place another spot right next to it to see the "already here" prompt, and try Cancel once.
   Commit: `Let drivers add repair spots with validation and duplicate warning`
 
-- [ ] **3. Drivers see the nearest shop and can get directions**
+- [x] **3. Drivers see the nearest shop and can get directions**
   Becomes usable: Location is requested on open ("Finding you..."), the map moves to the driver, or if location is denied, a tap sets where they are. The bottom panel shows a big nearest-shop card and the other shops sorted by distance, each with distance, vehicle emoji, price or "Price not listed", a tag and a Directions button that opens Google Maps. Tapping the handle expands or collapses the panel, and tapping a pin highlights that shop. Newly added spots appear in the list right away.
   Why now: This completes the other half of the proof (finding the nearest shop) on top of real data, including the driver-added spots from slice 2.
   PRD ref: `prd.md > Finding the Driver's Location`, `prd.md > Nearest Shop and Shop List`, `prd.md > Directions`, `prd.md > Screens and Layout`

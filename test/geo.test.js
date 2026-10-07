@@ -92,3 +92,8 @@ test('directionsUrl: Google Maps directions to the shop', () => {
     'https://www.google.com/maps/dir/?api=1&destination=11.5405,104.9195',
   );
 });
+
+test('nearestFirst: a vehicle no shop fixes gives an empty list', () => {
+  const motoOnly = samples.filter((s) => s.vehicles.includes('moto') && !s.vehicles.includes('car'));
+  assert.deepEqual(nearestFirst(motoOnly, { lat: 11.5564, lng: 104.9282 }, 'car'), []);
+});

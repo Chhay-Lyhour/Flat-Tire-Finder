@@ -47,10 +47,43 @@ button {
   inset: 0;
 }
 
-/* Short message near the top: location, add mode, errors. */
-.status {
+/* Vehicle filter: always at the very top. */
+.vehicle-filter {
   position: fixed;
   top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin: 0 auto;
+  max-width: 480px;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+}
+
+.vehicle-option {
+  min-height: 52px;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.vehicle-option.is-selected {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* Short message under the filter and legend: location, add mode, errors. */
+.status {
+  position: fixed;
+  top: 148px;
   left: 12px;
   right: 12px;
   z-index: 1002;
@@ -64,6 +97,19 @@ button {
   font-size: 17px;
   font-weight: 700;
   text-align: center;
+}
+
+.status-retry {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 10px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: 800;
 }
 
 /* Floating add button: always visible, just above the panel. */
@@ -529,7 +575,7 @@ button {
   background: var(--pin-driver);
 }
 
-/* Keep the legend clear of the status message. */
+/* Keep the legend clear of the vehicle filter. */
 .leaflet-top.leaflet-right {
-  top: 72px;
+  top: 76px;
 }

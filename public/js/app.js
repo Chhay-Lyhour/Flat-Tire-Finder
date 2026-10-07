@@ -5,29 +5,54 @@ import { initAddSpot, isPlacing, placePin, startAdding } from './addSpot.js';
 import { initPanel, renderPanel, highlight } from './panel.js';
 import { locateDriver } from './location.js';
 import { nearestFirst } from './geo.js';
+import { initFilter, VEHICLE_NAMES } from './filter.js';
 
 const state = {
   spots: [],
+  vehicle: 'moto', // moto riders are the main users
   here: null, // { lat, lng } once the driver's location is known
   waitingForTap: false, // location was denied: the next map tap sets it
   loaded: false,
 };
 
 const statusEl = document.getElementById('status');
+const statusText = document.getElementById('status-text');
+const retryButton = document.getElementById('status-retry');
 let statusTimer;
 
 // Shows a short message at the top. With `hideAfterMs`, it disappears on its own.
 export function showStatus(message, hideAfterMs) {
   clearTimeout(statusTimer);
-  statusEl.textContent = message;
+  statusText.textContent = message;
+  retryButton.hidden = true;
   statusEl.hidden = !message;
   if (message && hideAfterMs) statusTimer = setTimeout(() => showStatus(''), hideAfterMs);
 }
 
+// The pins, the nearest card and the list all follow the vehicle filter.
 function render() {
-  renderSpots(state.spots, highlight);
+  const matching = state.spots.filter((spot) => spot.vehicles.includes(state.vehicle));
+  renderSpots(matching, highlight);
   if (state.here && state.loaded) {
-    renderPanel(nearestFirst(state.spots, state.here, null), 'No repair spots near you yet. Add one!');
+    renderPanel(
+      nearestFirst(state.spots, state.here, state.vehicle),
+      `No ${VEHICLE_NAMES[state.vehicle]} repair spots near you yet. Add one!`,
+    );
+  }
+}
+
+// Returns true when the spots loaded; on failure shows the message with Retry.
+async function loadSpots() {
+  try {
+    state.spots = await getSpots();
+    state.loaded = true;
+    render();
+    return true;
+  } catch (error) {
+    console.error(error);
+    showStatus("Couldn't load repair spots. Check your connection.");
+    retryButton.hidden = false;
+    return false;
   }
 }
 
@@ -51,6 +76,17 @@ function handleMapTap(point) {
 async function start() {
   createMap('map', handleMapTap);
   initPanel({ onAdd: startAdding });
+  initFilter({
+    initial: state.vehicle,
+    onChange: (vehicle) => {
+      state.vehicle = vehicle;
+      render();
+    },
+  });
+  retryButton.addEventListener('click', async () => {
+    showStatus('Loading repair spots...');
+    if (await loadSpots()) showStatus(state.waitingForTap ? 'Tap the map to set where you are.' : '');
+  });
   initAddSpot({
     getSpots: () => state.spots,
     onSaved: (spot) => {
@@ -71,19 +107,13 @@ async function start() {
     onFallback: () => {
       if (!state.here) state.waitingForTap = true;
     },
+    // Location messages never cover a load error (the Retry button is showing).
     showStatus: (message) => {
-      if (!state.here && !isPlacing()) showStatus(message);
+      if (!state.here && !isPlacing() && retryButton.hidden) showStatus(message);
     },
   });
 
-  try {
-    state.spots = await getSpots();
-    state.loaded = true;
-    render();
-  } catch (error) {
-    console.error(error);
-    showStatus("Couldn't load repair spots. Check your connection.");
-  }
+  await loadSpots();
 }
 
 start();
