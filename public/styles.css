@@ -79,6 +79,199 @@ button {
   background: var(--accent-dark);
 }
 
+/* Bottom sheets: the add form now, the shop panel later. */
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  max-height: 70vh;
+  overflow-y: auto;
+  margin: 0 auto;
+  max-width: 560px;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  background: var(--bg);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 16px rgba(17, 20, 24, 0.2);
+}
+
+.sheet-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.field {
+  display: block;
+  margin: 0 0 14px;
+  padding: 0;
+  border: none;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  padding: 0;
+  font-weight: 700;
+}
+
+.field input[type='text'],
+.field input[type='number'] {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 14px;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 17px;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--text);
+}
+
+.field-error {
+  display: none;
+  margin-top: 4px;
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+.field.is-missing .field-error {
+  display: block;
+}
+
+.field.is-missing input[type='text'],
+.field.is-missing input[type='number'],
+.field.is-missing .chip span {
+  border-color: var(--accent);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 16px;
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chip input:checked + span {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.chip input:focus-visible + span {
+  outline: 3px solid var(--you);
+}
+
+.price-row {
+  display: flex;
+  gap: 8px;
+}
+
+.price-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.currency {
+  display: flex;
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 3px;
+}
+
+.currency-option {
+  min-height: 42px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.currency-option.is-selected {
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(17, 20, 24, 0.2);
+}
+
+.form-message {
+  margin: 0 0 10px;
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+.form-message:empty {
+  display: none;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.form-actions[hidden] {
+  display: none;
+}
+
+.duplicate {
+  flex-wrap: wrap;
+}
+
+.duplicate-text {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.button {
+  flex: 1;
+  min-height: var(--tap);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.button.primary {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+
+.button.primary:disabled {
+  background: #F5B48E;
+  cursor: not-allowed;
+}
+
+.button.secondary {
+  background: var(--surface);
+  color: var(--text);
+}
+
 /* Legend control in the map corner. */
 .legend {
   padding: 8px 12px;

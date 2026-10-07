@@ -11,7 +11,7 @@ Git rule (learner's choice): the agent never runs `git commit` or `git push`. Af
 
 ## Slices
 
-- [ ] **1. The map shows the labeled sample shops from Supabase**
+- [x] **1. The map shows the labeled sample shops from Supabase**
   Becomes usable: Running `npm start` and opening `http://localhost:3000` shows a full-screen map of Phnom Penh with slate sample-shop pins loaded from your Supabase database, plus the legend and the floating "Add a repair spot" button (not wired up yet).
   Why now: This proves the riskiest connections first: Express ↔ Supabase (with your new project, RLS and secret key) and Leaflet ↔ OpenStreetMap tiles. It also includes all the project setup, so every later slice has somewhere to land.
   PRD ref: `prd.md > Sample Shops`, `prd.md > Screens and Layout`, `prd.md > The Core Journey` (step 1)
@@ -73,3 +73,5 @@ Reflection:
 Activity mode:
 
 ## Revisions
+
+- `lib/supabase.js` now uses only the origin of `SUPABASE_URL` — the build found the dashboard's REST URL (ending in `/rest/v1/`) is an easy value to paste, and supabase-js rejects it with "Invalid path specified in request URL".

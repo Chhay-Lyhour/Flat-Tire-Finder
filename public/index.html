@@ -18,6 +18,52 @@
 
   <button id="add-button" class="add-button" type="button">+ Add a repair spot</button>
 
+  <form id="add-form" class="sheet add-form" hidden novalidate>
+    <h2 class="sheet-title">Add a repair spot</h2>
+
+    <label class="field" id="name-field">
+      <span class="field-label">Name</span>
+      <input id="spot-name" type="text" maxlength="100" autocomplete="off"
+             placeholder="e.g. Roadside stall near Chbar Ampov bridge">
+      <span class="field-error">Add a name</span>
+    </label>
+
+    <fieldset class="field" id="vehicle-field">
+      <legend class="field-label">Fixes</legend>
+      <div class="chips">
+        <label class="chip"><input type="checkbox" name="vehicle" value="moto"><span>🏍️ Moto</span></label>
+        <label class="chip"><input type="checkbox" name="vehicle" value="tuktuk"><span>🛺 Tuk-tuk</span></label>
+        <label class="chip"><input type="checkbox" name="vehicle" value="car"><span>🚗 Car</span></label>
+      </div>
+      <span class="field-error">Add at least one vehicle type</span>
+    </fieldset>
+
+    <div class="field" id="price-field">
+      <label class="field-label" for="spot-price">Puncture price (optional)</label>
+      <div class="price-row">
+        <input id="spot-price" type="number" inputmode="decimal" min="0" step="any" placeholder="5000">
+        <div class="currency" role="group" aria-label="Currency">
+          <button type="button" class="currency-option is-selected" data-currency="KHR" aria-pressed="true">៛ Riel</button>
+          <button type="button" class="currency-option" data-currency="USD" aria-pressed="false">$ Dollar</button>
+        </div>
+      </div>
+      <span class="field-error">The price must be a positive number</span>
+    </div>
+
+    <p id="form-message" class="form-message" role="alert"></p>
+
+    <div id="form-actions" class="form-actions">
+      <button type="button" id="cancel-add" class="button secondary">Cancel</button>
+      <button type="submit" id="save-spot" class="button primary" disabled>Save</button>
+    </div>
+
+    <div id="duplicate-confirm" class="form-actions duplicate" hidden>
+      <p class="duplicate-text">A repair spot is already here. Add anyway?</p>
+      <button type="button" id="duplicate-no" class="button secondary">Cancel</button>
+      <button type="button" id="duplicate-yes" class="button primary">Add anyway</button>
+    </div>
+  </form>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script type="module" src="js/app.js"></script>

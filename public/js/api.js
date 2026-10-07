@@ -6,3 +6,13 @@ export async function getSpots() {
   if (!response.ok) throw new Error(`GET /api/spots failed with ${response.status}`);
   return response.json();
 }
+
+export async function createSpot(spot) {
+  const response = await fetch('/api/spots', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(spot),
+  });
+  if (!response.ok) throw new Error(`POST /api/spots failed with ${response.status}`);
+  return response.json();
+}

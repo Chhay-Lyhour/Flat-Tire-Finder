@@ -7,6 +7,7 @@ const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyV
 
 let map;
 let spotLayer;
+let draftPin;
 
 export function createMap(elementId, onMapTap) {
   map = L.map(elementId, { zoomControl: false }).setView([PHNOM_PENH.lat, PHNOM_PENH.lng], 14);
@@ -33,6 +34,27 @@ function addLegend() {
     return box;
   };
   legend.addTo(map);
+}
+
+// The orange pin a driver places while adding a spot. Tapping again moves it.
+export function showDraftPin(point) {
+  if (!draftPin) {
+    draftPin = L.circleMarker([point.lat, point.lng], {
+      radius: 13,
+      color: '#FFFFFF',
+      weight: 4,
+      fillColor: cssVar('--accent'),
+      fillOpacity: 1,
+      interactive: false,
+    }).addTo(map);
+  } else {
+    draftPin.setLatLng([point.lat, point.lng]);
+  }
+}
+
+export function clearDraftPin() {
+  draftPin?.remove();
+  draftPin = null;
 }
 
 // Redraws every spot pin. Sample shops are slate, driver-added spots are green.
