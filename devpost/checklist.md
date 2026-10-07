@@ -78,4 +78,5 @@ Activity mode: live editor, with the app run by the learner during the build.
 ## Revisions
 
 - `lib/supabase.js` now uses only the origin of `SUPABASE_URL` — the build found the dashboard's REST URL (ending in `/rest/v1/`) is an easy value to paste, and supabase-js rejects it with "Invalid path specified in request URL".
+- `server.js` now serves `public/` from a path resolved against the file's own location — the optional Vercel deployment (chosen during `6-ship`) runs the server from a different working directory, so `express.static('public')` found nothing and `/` returned "Cannot GET /" while every other route worked.
 - Slice 3 also enlarges buttons and loosens the add form's spacing — the early checkpoint showed 48px targets and tight spacing felt small and cramped on a real phone-sized screen.

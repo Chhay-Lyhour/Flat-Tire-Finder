@@ -57,6 +57,9 @@ PRD ref: `prd.md > The Core Journey`.
   3. Run `npm install`, then `npm run seed` to load the sample shops.
 - **Start:** run `npm start`, then open `http://localhost:3000`.
 - **Recording the demo:** use Chrome DevTools device mode at phone size (for example, 390×844). The Geolocation API needs a secure page, which `localhost` counts as, so a phone on your Wi-Fi visiting your laptop's IP won't get location. If you aren't recording in Phnom Penh, set DevTools → More tools → Sensors → Location to a Phnom Penh latitude/longitude (for example 11.5564, 104.9282).
+- **Public repository:** https://github.com/Chhay-Lyhour/FlatFinder (verified public without signing in on 2026-10-07; `main` at `de23d4f`).
+- **Optional live deployment:** Vercel, chosen and set up by the learner during `6-ship`. It deploys from `main`, with `SUPABASE_URL` and `SUPABASE_SECRET_KEY` set in Vercel's Environment Variables, and lives at https://flat-finder-ivory.vercel.app. Location works there because Vercel serves the app over HTTPS.
+- **Demo video:** not recorded yet.
 - **Submission:** a short demo video and a public GitHub repository. Deployment isn't planned. If there's time at the end, `6-ship` can revisit it (Render or Railway can host an Express app, with the `.env` values set in their dashboard).
 
 ## Look and Feel
