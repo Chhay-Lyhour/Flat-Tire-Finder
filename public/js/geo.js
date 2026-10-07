@@ -22,6 +22,27 @@ export function findNearby(spots, point, meters) {
     .map(({ spot }) => spot);
 }
 
+// Spots that fix `vehicle` (all spots when vehicle is null), each with a `distance`
+// in meters from `here`, nearest first. No distance limit.
+export function nearestFirst(spots, here, vehicle) {
+  return spots
+    .filter((spot) => !vehicle || spot.vehicles.includes(vehicle))
+    .map((spot) => ({ ...spot, distance: haversineMeters(here, spot) }))
+    .sort((a, b) => a.distance - b.distance);
+}
+
+// "350 m" under 1 km, "1.2 km" from there up.
+export function formatDistance(meters) {
+  const rounded = Math.max(10, Math.round(meters / 10) * 10);
+  if (rounded < 1000) return `${rounded} m`;
+  return `${(meters / 1000).toFixed(1)} km`;
+}
+
+// Opens Google Maps with directions to the spot.
+export function directionsUrl(spot) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`;
+}
+
 // "~5,000៛", "~$1.50", or "Price not listed".
 export function formatPrice(amount, currency) {
   if (amount === null || amount === undefined) return 'Price not listed';

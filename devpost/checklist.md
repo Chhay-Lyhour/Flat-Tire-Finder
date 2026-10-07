@@ -21,7 +21,7 @@ Git rule (learner's choice): the agent never runs `git commit` or `git push`. Af
   Learner check: Open `http://localhost:3000` in Chrome DevTools phone view. You should see a map of Phnom Penh with 7 slate pins, a legend in the corner and an orange "Add a repair spot" button. Open the `spots` table in the Supabase dashboard and confirm it holds the same 7 sample shops.
   Commit: `Show sample repair shops from Supabase on a Leaflet map`
 
-- [ ] **2. Drivers can add a repair spot that persists for everyone**
+- [x] **2. Drivers can add a repair spot that persists for everyone**
   Becomes usable: Tap "Add a repair spot", tap the map to place (or move) a pin, fill in the name, vehicle types and optional price (riel or dollars), and save. A green "Added by a driver" pin appears and survives a refresh. Cancel discards everything, a nearby duplicate triggers a warning, and a failed save keeps the form filled in.
   Why now: This is the unique kernel, adding stalls that Google Maps doesn't have, so it comes before anything else is built around it. It also exercises the write path and validation on both browser and server.
   PRD ref: `prd.md > Adding a Repair Spot`, `prd.md > States and Boundaries`
@@ -36,7 +36,7 @@ Git rule (learner's choice): the agent never runs `git commit` or `git push`. Af
   Why now: This completes the other half of the proof (finding the nearest shop) on top of real data, including the driver-added spots from slice 2.
   PRD ref: `prd.md > Finding the Driver's Location`, `prd.md > Nearest Shop and Shop List`, `prd.md > Directions`, `prd.md > Screens and Layout`
   Spec ref: `spec.md > Location (public/js/location.js)`, `spec.md > Bottom Panel (public/js/panel.js)`, `spec.md > Distance and Formatting (public/js/geo.js)` (`nearestFirst`, `formatDistance`), `spec.md > App State and Startup (public/js/app.js)`, `spec.md > The Core Journey Through the System`, `spec.md > Look and Feel`
-  Build: Add `public/js/location.js` (10-second timeout, tap-to-set fallback, blue dot), `public/js/panel.js` (nearest card, list, tags, Directions links, tap-to-expand handle, `highlight(id)`), and `nearestFirst` and `formatDistance` in `geo.js` with tests. Wire the re-render in `app.js`.
+  Build: Add `public/js/location.js` (10-second timeout, tap-to-set fallback, blue dot), `public/js/panel.js` (nearest card, list, tags, Directions links, tap-to-expand handle, `highlight(id)`), and `nearestFirst` and `formatDistance` in `geo.js` with tests. Wire the re-render in `app.js`. From the early checkpoint: make the buttons bigger and give the add form more room on a phone.
   Verify (mechanical): `npm test` passes, including sorting the sample shops from a known point to put the expected shop first and formatting "350 m" and "1.2 km". A static check that each Directions link matches `https://www.google.com/maps/dir/?api=1&destination=LAT,LNG` for its shop. The server starts with no errors and the page loads with no console errors.
   Learner check: In DevTools Sensors, set the location to 11.5564, 104.9282 and reload. The map should jump there, and the card should show the closest shop with its distance. Tap Directions to open Google Maps. Expand and collapse the panel, and tap a pin to see it highlighted. Then set Sensors to "Location unavailable", reload, and tap the map to set your position.
   Commit: `Show nearest shops sorted by distance with directions`
@@ -53,7 +53,7 @@ Git rule (learner's choice): the agent never runs `git commit` or `git push`. Af
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 2: the map, sample shops and adding a spot, while there's still time to adjust the rest of the build
+- [x] Early usable behavior explored — after slice 2: the map, sample shops and adding a spot, while there's still time to adjust the rest of the build. Learner ran all six add-flow checks successfully (validation, cancel, save with a green pin that survives refresh, duplicate warning, failed save). Feedback: the look matches, but the buttons should be bigger and the form feels cramped on a phone. This was folded into slice 3.
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
@@ -75,3 +75,4 @@ Activity mode:
 ## Revisions
 
 - `lib/supabase.js` now uses only the origin of `SUPABASE_URL` — the build found the dashboard's REST URL (ending in `/rest/v1/`) is an easy value to paste, and supabase-js rejects it with "Invalid path specified in request URL".
+- Slice 3 also enlarges buttons and loosens the add form's spacing — the early checkpoint showed 48px targets and tight spacing felt small and cramped on a real phone-sized screen.

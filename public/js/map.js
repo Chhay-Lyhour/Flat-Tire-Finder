@@ -36,6 +36,25 @@ function addLegend() {
   legend.addTo(map);
 }
 
+let youDot;
+
+// The driver's position: a blue dot, and the map moves there.
+export function showYou(point) {
+  if (!youDot) {
+    youDot = L.circleMarker([point.lat, point.lng], {
+      radius: 9,
+      color: '#FFFFFF',
+      weight: 3,
+      fillColor: cssVar('--you'),
+      fillOpacity: 1,
+      interactive: false,
+    }).addTo(map);
+  } else {
+    youDot.setLatLng([point.lat, point.lng]);
+  }
+  map.setView([point.lat, point.lng], 15);
+}
+
 // The orange pin a driver places while adding a spot. Tapping again moves it.
 export function showDraftPin(point) {
   if (!draftPin) {

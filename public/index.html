@@ -18,6 +18,15 @@
 
   <button id="add-button" class="add-button" type="button">+ Add a repair spot</button>
 
+  <section id="panel" class="sheet panel" hidden aria-label="Repair shops">
+    <button id="panel-handle" class="panel-handle" type="button" aria-expanded="false" aria-controls="shop-list">
+      <span class="grip" aria-hidden="true"></span>
+      <span id="panel-handle-label">Show all shops</span>
+    </button>
+    <div id="nearest"></div>
+    <ol id="shop-list" class="shop-list"></ol>
+  </section>
+
   <form id="add-form" class="sheet add-form" hidden novalidate>
     <h2 class="sheet-title">Add a repair spot</h2>
 

@@ -66,7 +66,7 @@ Carried forward from `prd.md > Look and Feel` and `scope.md > Inspiration & Iden
   - `--bg: #FFFFFF`, `--surface: #F4F5F7`, `--text: #111418`, `--muted: #4A5260` (still high contrast).
   - Pins: `--pin-sample: #6B7A90` (slate), `--pin-driver: #0E9F6E` (green), `--you: #1A73E8` (blue dot).
 - **Font:** Nunito (a rounded sans-serif) from Google Fonts, falling back to `system-ui, sans-serif`. Shop name about 20px bold, distance about 28px bold on the nearest card, details 14–15px.
-- **Tap targets:** at least 48px tall, 12px rounded corners. The floating Add button is a large orange pill above the panel.
+- **Tap targets:** at least 56px tall (raised from 48px after the early checkpoint), 12px rounded corners, with roomy spacing in the add form. The floating Add button is a large orange pill above the panel.
 - **Vehicle icons:** emoji 🏍️ Moto, 🛺 Tuk-tuk, 🚗 Car next to text labels, so no image files are needed.
 - **Legend:** a small box in the map corner showing "● Sample shop" and "● Added by a driver".
 - **Copy:** short, plain English, using the exact strings from the PRD.
@@ -130,7 +130,7 @@ PRD ref: `prd.md > Vehicle Filter`.
 - Renders the nearest-shop card and the list below it.
 - Each entry shows the name, distance, vehicle emoji, price, a "Sample shop" or "Added by a driver" tag, and a Directions link.
 - When nothing matches, it shows "No [vehicle] repair spots near you yet. Add one!" with an add button.
-- The panel has two heights: **collapsed** (the default, showing the handle and the nearest-shop card) and **expanded** (about 70% of the screen, with the list scrollable inside). Tapping the handle, a button at least 48px tall, toggles an `expanded` class on the panel. `highlight(id)` expands the panel first if needed.
+- The panel has two heights: **collapsed** (the default, showing the handle and the nearest-shop card) and **expanded** (about 70% of the screen, with the list scrollable inside). Tapping the handle, a button at least 56px tall, toggles an `expanded` class on the panel. `highlight(id)` expands the panel first if needed.
 - `highlight(id)` scrolls a shop into view and outlines it in orange.
 
 PRD ref: `prd.md > Nearest Shop and Shop List`, `prd.md > Directions`, `prd.md > Screens and Layout`.

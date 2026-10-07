@@ -28,7 +28,7 @@ let saving = false;
 const touched = new Set();
 let deps;
 
-// deps: { getSpots(), onSaved(spot), showStatus(message) }
+// deps: { getSpots(), onSaved(spot), showStatus(message), onClosed() }
 export function initAddSpot(dependencies) {
   deps = dependencies;
 
@@ -61,8 +61,10 @@ export function placePin(tapped) {
   update();
 }
 
-function startAdding() {
+// Also used by the panel's empty state.
+export function startAdding() {
   placing = true;
+  document.body.classList.add('is-adding');
   addButton.hidden = true;
   deps.showStatus('Tap the map where the stall is.');
 }
@@ -77,9 +79,11 @@ function stopAdding() {
   formMessage.textContent = '';
   showDuplicatePrompt(false);
   form.hidden = true;
+  document.body.classList.remove('is-adding');
   addButton.hidden = false;
   clearDraftPin();
   deps.showStatus('');
+  deps.onClosed?.();
 }
 
 // Riel by default; the toggle switches to dollars.
