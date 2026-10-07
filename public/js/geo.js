@@ -43,6 +43,19 @@ export function directionsUrl(spot) {
   return `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`;
 }
 
+// The message a driver forwards: name, price, phone if listed, and a directions link.
+export function shareText(spot) {
+  const lines = [spot.name, formatPrice(spot.price_amount, spot.price_currency)];
+  if (spot.phone) lines.push(`Phone: ${spot.phone}`);
+  lines.push(directionsUrl(spot));
+  return lines.join('\n');
+}
+
+// WhatsApp with the message ready to send, for browsers without a share sheet.
+export function whatsappUrl(text) {
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
+
 // "~5,000៛", "~$1.50", or "Price not listed".
 export function formatPrice(amount, currency) {
   if (amount === null || amount === undefined) return 'Price not listed';

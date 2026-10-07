@@ -490,9 +490,10 @@ button {
 
 .shop-bottom {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px 12px;
 }
 
 .tag {
@@ -527,7 +528,24 @@ button {
 
 .shop-links {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 8px;
+}
+
+.share {
+  min-height: var(--tap);
+  padding: 0 16px;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.share:active {
+  background: var(--surface);
 }
 
 .directions,

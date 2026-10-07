@@ -7,6 +7,8 @@ import {
   nearestFirst,
   formatDistance,
   directionsUrl,
+  shareText,
+  whatsappUrl,
 } from '../public/js/geo.js';
 
 test('haversine: same point is 0 m', () => {
@@ -91,6 +93,23 @@ test('directionsUrl: Google Maps directions to the shop', () => {
     directionsUrl({ lat: 11.5405, lng: 104.9195 }),
     'https://www.google.com/maps/dir/?api=1&destination=11.5405,104.9195',
   );
+});
+
+test('shareText: name, price, phone and directions link, one per line', () => {
+  const spot = { name: 'Stall near Wat Phnom', lat: 11.5765, lng: 104.9235, price_amount: 6000, price_currency: 'KHR', phone: '012 345 678' };
+  assert.equal(
+    shareText(spot),
+    'Stall near Wat Phnom\n~6,000៛\nPhone: 012 345 678\nhttps://www.google.com/maps/dir/?api=1&destination=11.5765,104.9235',
+  );
+});
+
+test('shareText: leaves out the phone line when there is no phone', () => {
+  const spot = { name: 'Stall', lat: 1, lng: 2, price_amount: null, price_currency: null, phone: null };
+  assert.equal(shareText(spot), 'Stall\nPrice not listed\nhttps://www.google.com/maps/dir/?api=1&destination=1,2');
+});
+
+test('whatsappUrl: encodes the message, including new lines and the link', () => {
+  assert.equal(whatsappUrl('A & B\nhttps://x.y/?a=1'), 'https://wa.me/?text=A%20%26%20B%0Ahttps%3A%2F%2Fx.y%2F%3Fa%3D1');
 });
 
 test('nearestFirst: a vehicle no shop fixes gives an empty list', () => {

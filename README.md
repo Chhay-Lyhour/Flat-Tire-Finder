@@ -13,6 +13,7 @@ Built for moto riders and tuk-tuk drivers first. This is a proof of concept made
 - **Directions:** opens Google Maps with directions to the shop.
 - **Add a repair spot:** no sign-in needed. Name and vehicle types are required, and the price and phone number are optional. A spot within about 30 m of an existing one asks "Add anyway?" first.
 - **Call the repairer:** if a spot has a phone number, a "Call" button sits next to "Directions" so a driver who can't get their vehicle there can ask the repairer to come find them instead.
+- **Share a spot:** "Share" sends the shop's name, price, phone and a directions link. On phones it opens the share sheet (SMS, WhatsApp, Telegram and so on); on a computer it opens WhatsApp with the message ready.
 - **Edit or delete your own spot:** still no sign-in. The browser that added a spot gets a one-time token back and remembers it, so only that browser sees "Edit"/"Delete" on that spot's card. Clearing the browser's storage, or opening the spot on another device, loses that ability — there are no accounts to recover it with.
 - **Works on a bad connection:** every successful load is saved in the browser. If the next load fails, the app shows the saved shops with an "offline" note and a Retry button, instead of an empty map. Adding, editing and deleting still need a connection.
 - **Works without location access:** if you deny location, tap the map to set where you are.

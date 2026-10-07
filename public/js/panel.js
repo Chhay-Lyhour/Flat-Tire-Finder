@@ -1,5 +1,5 @@
 // The bottom panel: the nearest-shop card, the other shops by distance, and the expand handle.
-import { formatDistance, formatPrice, directionsUrl } from './geo.js';
+import { formatDistance, formatPrice, directionsUrl, shareText, whatsappUrl } from './geo.js';
 import { isOwned } from './ownership.js';
 
 const VEHICLE_LABELS = { moto: '🏍️ Moto', tuktuk: '🛺 Tuk-tuk', car: '🚗 Car' };
@@ -99,12 +99,30 @@ function shopEntry(spot, isNearest) {
   directions.target = '_blank';
   directions.rel = 'noopener';
   links.append(directions);
+  const share = el('button', 'share', 'Share');
+  share.type = 'button';
+  share.addEventListener('click', () => shareSpot(spot));
+  links.append(share);
   bottom.append(links);
   card.append(bottom);
 
   if (isOwned(spot.id)) card.append(ownerActions(spot));
 
   return card;
+}
+
+// Phones get the native share sheet (SMS, WhatsApp, Telegram...); elsewhere, WhatsApp in a new tab.
+async function shareSpot(spot) {
+  const text = shareText(spot);
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: spot.name, text });
+    } catch {
+      // The driver closed the share sheet: nothing to do.
+    }
+    return;
+  }
+  window.open(whatsappUrl(text), '_blank', 'noopener');
 }
 
 // Edit/Delete: only shown on the spot's own browser (see ownership.js) — no accounts needed.
