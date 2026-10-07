@@ -1,5 +1,5 @@
 // Page state and startup. Every change to the state goes through render().
-import { getSpots, deleteSpot } from './api.js';
+import { getSpots, getCachedSpots, deleteSpot } from './api.js';
 import { createMap, renderSpots, showYou } from './map.js';
 import { initAddSpot, isPlacing, placePin, startAdding, startEditing } from './addSpot.js';
 import { initPanel, renderPanel, highlight } from './panel.js';
@@ -42,7 +42,8 @@ function render() {
   }
 }
 
-// Returns true when the spots loaded; on failure shows the message with Retry.
+// Returns true when the spots loaded. Offline, it falls back to the last saved list
+// (with Retry so the driver can refresh); with nothing saved, it shows the error with Retry.
 async function loadSpots() {
   try {
     state.spots = await getSpots();
@@ -51,7 +52,15 @@ async function loadSpots() {
     return true;
   } catch (error) {
     console.error(error);
-    showStatus("Couldn't load repair spots. Check your connection.");
+    const cached = getCachedSpots();
+    if (cached) {
+      state.spots = cached;
+      state.loaded = true;
+      render();
+      showStatus("You're offline. Showing shops saved from your last visit.");
+    } else {
+      showStatus("Couldn't load repair spots. Check your connection.");
+    }
     retryButton.hidden = false;
     return false;
   }
