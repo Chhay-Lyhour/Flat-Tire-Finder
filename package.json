@@ -1,0 +1,20 @@
+{
+  "name": "flatfinder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Find the nearest tire repair stall in Cambodia, and add the ones Google Maps doesn't have.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test test/"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "dotenv": "^18.0.6",
+    "express": "^4.22.3"
+  }
+}

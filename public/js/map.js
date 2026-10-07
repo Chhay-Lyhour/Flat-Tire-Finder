@@ -1,0 +1,55 @@
+// The Leaflet map: OpenStreetMap tiles, repair-spot pins and the legend.
+/* global L */
+
+export const PHNOM_PENH = { lat: 11.5564, lng: 104.9282 };
+
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+let map;
+let spotLayer;
+
+export function createMap(elementId, onMapTap) {
+  map = L.map(elementId, { zoomControl: false }).setView([PHNOM_PENH.lat, PHNOM_PENH.lng], 14);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
+
+  spotLayer = L.layerGroup().addTo(map);
+  addLegend();
+
+  map.on('click', (event) => onMapTap({ lat: event.latlng.lat, lng: event.latlng.lng }));
+  return map;
+}
+
+function addLegend() {
+  const legend = L.control({ position: 'topright' });
+  legend.onAdd = () => {
+    const box = L.DomUtil.create('div', 'legend');
+    box.innerHTML =
+      '<div><span class="legend-dot sample"></span>Sample shop</div>' +
+      '<div><span class="legend-dot driver"></span>Added by a driver</div>';
+    return box;
+  };
+  legend.addTo(map);
+}
+
+// Redraws every spot pin. Sample shops are slate, driver-added spots are green.
+export function renderSpots(spots, onPinTap) {
+  spotLayer.clearLayers();
+  for (const spot of spots) {
+    const pin = L.circleMarker([spot.lat, spot.lng], {
+      radius: 10,
+      color: '#FFFFFF',
+      weight: 3,
+      fillColor: spot.is_sample ? cssVar('--pin-sample') : cssVar('--pin-driver'),
+      fillOpacity: 1,
+    });
+    pin.on('click', (event) => {
+      L.DomEvent.stopPropagation(event);
+      onPinTap?.(spot.id);
+    });
+    pin.addTo(spotLayer);
+  }
+}
