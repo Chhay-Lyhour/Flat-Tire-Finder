@@ -37,3 +37,15 @@ test('rejects a price without a currency, or a negative price', () => {
   assert.equal(validateSpot({ ...good, price_amount: 5000 }).ok, false);
   assert.equal(validateSpot({ ...good, price_amount: -1, price_currency: 'KHR' }).ok, false);
 });
+
+test('phone is optional, but trimmed and checked when given', () => {
+  assert.equal(validateSpot(good).value.phone, null);
+  assert.equal(validateSpot({ ...good, phone: '  ' }).value.phone, null);
+  assert.equal(validateSpot({ ...good, phone: ' 012 345 678 ' }).value.phone, '012 345 678');
+  assert.equal(validateSpot({ ...good, phone: '+855 12 345 678' }).ok, true);
+});
+
+test('rejects a phone number that is too short or has letters', () => {
+  assert.equal(validateSpot({ ...good, phone: '123' }).error, 'Enter a valid phone number.');
+  assert.equal(validateSpot({ ...good, phone: 'call me' }).ok, false);
+});

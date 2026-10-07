@@ -11,7 +11,8 @@ Built for moto riders and tuk-tuk drivers first. This is a proof of concept made
 - **Nearest shop first:** a large card shows the closest shop for your vehicle, with the rest listed by distance below it.
 - **Vehicle filter:** Moto, Tuk-tuk or Car. The map pins, the card and the list all follow it.
 - **Directions:** opens Google Maps with directions to the shop.
-- **Add a repair spot:** no sign-in needed. Name and vehicle types are required, and the price is optional. A spot within about 30 m of an existing one asks "Add anyway?" first.
+- **Add a repair spot:** no sign-in needed. Name and vehicle types are required, and the price and phone number are optional. A spot within about 30 m of an existing one asks "Add anyway?" first.
+- **Call the repairer:** if a spot has a phone number, a "Call" button sits next to "Directions" so a driver who can't get their vehicle there can ask the repairer to come find them instead.
 - **Works without location access:** if you deny location, tap the map to set where you are.
 - **Clearly labeled data:** the shops named "Sample:" are illustrative demo data, not real businesses. Spots that drivers add are green and labeled "Added by a driver."
 
@@ -30,7 +31,7 @@ Phone browser (Leaflet map + panel)  ──GET/POST /api/spots──▶  Express
 
 You need [Node.js](https://nodejs.org/) 20 or newer and a free [Supabase](https://supabase.com/) project.
 
-1. **Create the table:** in your Supabase project, open **SQL Editor**, paste [`db/schema.sql`](db/schema.sql) and run it.
+1. **Create the table:** in your Supabase project, open **SQL Editor**, paste [`db/schema.sql`](db/schema.sql) and run it. (Already have the table from before the phone field was added? Re-running it is safe — it only adds the new column.)
 2. **Configure:** copy `.env.example` to `.env` and fill in the values from the Supabase dashboard (Project Settings → API Keys):
    ```
    SUPABASE_URL=https://<your-project>.supabase.co

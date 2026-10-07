@@ -82,11 +82,19 @@ function shopEntry(spot, isNearest) {
 
   const bottom = el('div', 'shop-bottom');
   bottom.append(el('span', spot.is_sample ? 'tag sample' : 'tag driver', spot.is_sample ? 'Sample shop' : 'Added by a driver'));
+
+  const links = el('div', 'shop-links');
+  if (spot.phone) {
+    const call = el('a', 'call', 'Call');
+    call.href = `tel:${spot.phone}`;
+    links.append(call);
+  }
   const directions = el('a', 'directions', 'Directions');
   directions.href = directionsUrl(spot);
   directions.target = '_blank';
   directions.rel = 'noopener';
-  bottom.append(directions);
+  links.append(directions);
+  bottom.append(links);
   card.append(bottom);
 
   return card;

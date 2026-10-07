@@ -183,7 +183,8 @@ button {
 }
 
 .field input[type='text'],
-.field input[type='number'] {
+.field input[type='number'],
+.field input[type='tel'] {
   width: 100%;
   min-height: var(--tap);
   padding: 0 16px;
@@ -207,12 +208,25 @@ button {
   font-weight: 700;
 }
 
+.field-hint {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field.is-missing .field-hint {
+  display: none;
+}
+
 .field.is-missing .field-error {
   display: block;
 }
 
 .field.is-missing input[type='text'],
 .field.is-missing input[type='number'],
+.field.is-missing input[type='tel'],
 .field.is-missing .chip span {
   border-color: var(--accent);
 }
@@ -511,7 +525,13 @@ button {
   background: var(--pin-driver);
 }
 
-.directions {
+.shop-links {
+  display: flex;
+  gap: 8px;
+}
+
+.directions,
+.call {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -525,8 +545,17 @@ button {
   text-decoration: none;
 }
 
-.directions:active {
+.directions:active,
+.call:active {
   background: var(--accent-dark);
+}
+
+.call {
+  background: var(--pin-driver);
+}
+
+.call:active {
+  background: #08734F;
 }
 
 .empty {
