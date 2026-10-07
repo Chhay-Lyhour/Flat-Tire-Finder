@@ -13,6 +13,7 @@ Built for moto riders and tuk-tuk drivers first. This is a proof of concept made
 - **Directions:** opens Google Maps with directions to the shop.
 - **Add a repair spot:** no sign-in needed. Name and vehicle types are required, and the price and phone number are optional. A spot within about 30 m of an existing one asks "Add anyway?" first.
 - **Call the repairer:** if a spot has a phone number, a "Call" button sits next to "Directions" so a driver who can't get their vehicle there can ask the repairer to come find them instead.
+- **English or Khmer:** the button under the vehicle filter switches every label, button and message. The choice is remembered on the next visit. Shop names stay as drivers typed them, and the message sent by Share stays in English.
 - **Share a spot:** "Share" sends the shop's name, price, phone and a directions link. On phones it opens the share sheet (SMS, WhatsApp, Telegram and so on); on a computer it opens WhatsApp with the message ready.
 - **Edit or delete your own spot:** still no sign-in. The browser that added a spot gets a one-time token back and remembers it, so only that browser sees "Edit"/"Delete" on that spot's card. Clearing the browser's storage, or opening the spot on another device, loses that ability — there are no accounts to recover it with.
 - **Works on a bad connection:** every successful load is saved in the browser. If the next load fails, the app shows the saved shops with an "offline" note and a Retry button, instead of an empty map. Adding, editing and deleting still need a connection.
@@ -82,6 +83,7 @@ public/styles.css      Look and feel
 public/js/app.js       Page state, startup, what a map tap means
 public/js/api.js       Calls to /api/spots
 public/js/ownership.js Remembers which spots this browser added, for Edit/Delete
+public/js/i18n.js      English and Khmer text, and the language switch
 public/js/location.js  Browser location + tap-to-set fallback
 public/js/map.js       Leaflet map, pins, legend, your position
 public/js/geo.js       Distance, sorting, duplicate check, formatting
@@ -93,7 +95,7 @@ test/                  Unit tests (node --test)
 
 ## Not in this proof of concept
 
-User accounts, editing or deleting spots, ratings and reviews, photos, "still open?" checks, a Khmer language toggle and turn-by-turn navigation (Directions hands off to Google Maps). Distances are straight-line, not along the road.
+User accounts, ratings and reviews, photos, "still open?" checks and turn-by-turn navigation (Directions hands off to Google Maps). Distances are straight-line, not along the road.
 
 ## Credits
 

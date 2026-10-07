@@ -6,7 +6,8 @@ import { initPanel, renderPanel, highlight } from './panel.js';
 import { getOwnerToken, forgetOwner } from './ownership.js';
 import { locateDriver } from './location.js';
 import { nearestFirst } from './geo.js';
-import { initFilter, VEHICLE_NAMES } from './filter.js';
+import { initFilter } from './filter.js';
+import { t, getLang, setLang, applyLanguage } from './i18n.js';
 
 const state = {
   spots: [],
@@ -20,14 +21,17 @@ const statusEl = document.getElementById('status');
 const statusText = document.getElementById('status-text');
 const retryButton = document.getElementById('status-retry');
 let statusTimer;
+let statusKey = '';
 
-// Shows a short message at the top. With `hideAfterMs`, it disappears on its own.
-export function showStatus(message, hideAfterMs) {
+// Shows a short message at the top, by i18n key ('' hides it). Keeping the key, not the text,
+// lets a language switch re-translate a message that's on screen. With `hideAfterMs`, it disappears on its own.
+function showStatus(key, hideAfterMs) {
   clearTimeout(statusTimer);
-  statusText.textContent = message;
+  statusKey = key;
+  statusText.textContent = key ? t(key) : '';
   retryButton.hidden = true;
-  statusEl.hidden = !message;
-  if (message && hideAfterMs) statusTimer = setTimeout(() => showStatus(''), hideAfterMs);
+  statusEl.hidden = !key;
+  if (key && hideAfterMs) statusTimer = setTimeout(() => showStatus(''), hideAfterMs);
 }
 
 // The pins, the nearest card and the list all follow the vehicle filter.
@@ -37,7 +41,7 @@ function render() {
   if (state.here && state.loaded) {
     renderPanel(
       nearestFirst(state.spots, state.here, state.vehicle),
-      `No ${VEHICLE_NAMES[state.vehicle]} repair spots near you yet. Add one!`,
+      t('noSpotsNear', { vehicle: t(state.vehicle) }),
     );
   }
 }
@@ -57,9 +61,9 @@ async function loadSpots() {
       state.spots = cached;
       state.loaded = true;
       render();
-      showStatus("You're offline. Showing shops saved from your last visit.");
+      showStatus('offlineSaved');
     } else {
-      showStatus("Couldn't load repair spots. Check your connection.");
+      showStatus('loadFailed');
     }
     retryButton.hidden = false;
     return false;
@@ -90,15 +94,22 @@ async function deleteSpotFlow(spot) {
     forgetOwner(spot.id);
     state.spots = state.spots.filter((s) => s.id !== spot.id);
     render();
-    showStatus('Spot deleted', 2500);
+    showStatus('spotDeleted', 2500);
   } catch (error) {
     console.error(error);
-    showStatus("Couldn't delete. Try again.", 2500);
+    showStatus('deleteFailed', 2500);
   }
 }
 
 async function start() {
   createMap('map', handleMapTap);
+  applyLanguage();
+  document.getElementById('lang-toggle').addEventListener('click', () => setLang(getLang() === 'en' ? 'km' : 'en'));
+  // Static text is already switched by setLang(); redraw what JS builds.
+  window.addEventListener('flatfinder:langchange', () => {
+    if (statusKey) statusText.textContent = t(statusKey);
+    render();
+  });
   initPanel({ onAdd: startAdding, onEdit: startEditing, onDelete: deleteSpotFlow });
   initFilter({
     initial: state.vehicle,
@@ -108,8 +119,8 @@ async function start() {
     },
   });
   retryButton.addEventListener('click', async () => {
-    showStatus('Loading repair spots...');
-    if (await loadSpots()) showStatus(state.waitingForTap ? 'Tap the map to set where you are.' : '');
+    showStatus('loading');
+    if (await loadSpots()) showStatus(state.waitingForTap ? 'tapToSetLocation' : '');
   });
   initAddSpot({
     getSpots: () => state.spots,
@@ -124,7 +135,7 @@ async function start() {
     showStatus,
     // Leaving add mode: remind the driver if we still need their location.
     onClosed: () => {
-      if (state.waitingForTap) showStatus('Tap the map to set where you are.');
+      if (state.waitingForTap) showStatus('tapToSetLocation');
     },
   });
 
@@ -136,8 +147,8 @@ async function start() {
       if (!state.here) state.waitingForTap = true;
     },
     // Location messages never cover a load error (the Retry button is showing).
-    showStatus: (message) => {
-      if (!state.here && !isPlacing() && retryButton.hidden) showStatus(message);
+    showStatus: (key) => {
+      if (!state.here && !isPlacing() && retryButton.hidden) showStatus(key);
     },
   });
 

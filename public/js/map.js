@@ -29,8 +29,8 @@ function addLegend() {
   legend.onAdd = () => {
     const box = L.DomUtil.create('div', 'legend');
     box.innerHTML =
-      '<div><span class="legend-dot sample"></span>Sample shop</div>' +
-      '<div><span class="legend-dot driver"></span>Added by a driver</div>';
+      '<div><span class="legend-dot sample"></span><span data-i18n="sampleShop">Sample shop</span></div>' +
+      '<div><span class="legend-dot driver"></span><span data-i18n="addedByDriver">Added by a driver</span></div>';
     return box;
   };
   legend.addTo(map);

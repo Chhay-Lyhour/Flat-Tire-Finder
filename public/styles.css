@@ -28,7 +28,8 @@ body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Nunito', system-ui, sans-serif;
+  /* Nunito has no Khmer letters, so Khmer text falls through to Noto Sans Khmer. */
+  font-family: 'Nunito', 'Noto Sans Khmer', system-ui, sans-serif;
   font-size: 16px;
   overflow: hidden;
 }
@@ -78,6 +79,23 @@ button {
 .vehicle-option.is-selected {
   background: var(--text);
   color: var(--bg);
+}
+
+/* Language switch: under the filter on the left, mirroring the legend on the right. */
+.lang-toggle {
+  position: fixed;
+  top: 76px;
+  left: 12px;
+  z-index: 1000;
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: var(--shadow);
 }
 
 /* Short message under the filter and legend: location, add mode, errors. */
@@ -621,7 +639,7 @@ button {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   color: var(--text);
-  font-family: 'Nunito', system-ui, sans-serif;
+  font-family: 'Nunito', 'Noto Sans Khmer', system-ui, sans-serif;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.6;

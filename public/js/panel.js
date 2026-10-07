@@ -1,8 +1,7 @@
 // The bottom panel: the nearest-shop card, the other shops by distance, and the expand handle.
 import { formatDistance, formatPrice, directionsUrl, shareText, whatsappUrl } from './geo.js';
 import { isOwned } from './ownership.js';
-
-const VEHICLE_LABELS = { moto: '🏍️ Moto', tuktuk: '🛺 Tuk-tuk', car: '🚗 Car' };
+import { t, setText } from './i18n.js';
 
 const panel = document.getElementById('panel');
 const handle = document.getElementById('panel-handle');
@@ -30,7 +29,7 @@ export function initPanel({ onAdd, onEdit, onDelete }) {
 function setExpanded(expanded) {
   panel.classList.toggle('expanded', expanded);
   handle.setAttribute('aria-expanded', String(expanded));
-  handleLabel.textContent = expanded ? 'Show the map' : 'Show all shops';
+  setText(handleLabel, expanded ? 'showMap' : 'showAllShops');
 }
 
 // `sorted` comes from nearestFirst(): matching spots with a distance, nearest first.
@@ -72,34 +71,35 @@ function shopEntry(spot, isNearest) {
   const card = el('article', isNearest ? 'shop nearest-card' : 'shop');
   card.dataset.id = spot.id;
 
-  if (isNearest) card.append(el('p', 'nearest-label', 'Nearest repair shop'));
+  if (isNearest) card.append(el('p', 'nearest-label', t('nearest')));
 
   const top = el('div', 'shop-top');
   top.append(el('h3', 'shop-name', spot.name), el('span', 'shop-distance', formatDistance(spot.distance)));
   card.append(top);
 
+  const price = spot.price_amount == null ? t('priceNotListed') : formatPrice(spot.price_amount, spot.price_currency);
   const details = el('p', 'shop-details');
   details.append(
-    el('span', 'shop-vehicles', spot.vehicles.map((v) => VEHICLE_LABELS[v]).join('  ')),
-    el('span', 'shop-price', formatPrice(spot.price_amount, spot.price_currency)),
+    el('span', 'shop-vehicles', spot.vehicles.map((v) => t(`${v}Label`)).join('  ')),
+    el('span', 'shop-price', price),
   );
   card.append(details);
 
   const bottom = el('div', 'shop-bottom');
-  bottom.append(el('span', spot.is_sample ? 'tag sample' : 'tag driver', spot.is_sample ? 'Sample shop' : 'Added by a driver'));
+  bottom.append(el('span', spot.is_sample ? 'tag sample' : 'tag driver', t(spot.is_sample ? 'sampleShop' : 'addedByDriver')));
 
   const links = el('div', 'shop-links');
   if (spot.phone) {
-    const call = el('a', 'call', 'Call');
+    const call = el('a', 'call', t('call'));
     call.href = `tel:${spot.phone}`;
     links.append(call);
   }
-  const directions = el('a', 'directions', 'Directions');
+  const directions = el('a', 'directions', t('directions'));
   directions.href = directionsUrl(spot);
   directions.target = '_blank';
   directions.rel = 'noopener';
   links.append(directions);
-  const share = el('button', 'share', 'Share');
+  const share = el('button', 'share', t('share'));
   share.type = 'button';
   share.addEventListener('click', () => shareSpot(spot));
   links.append(share);
@@ -129,15 +129,15 @@ async function shareSpot(spot) {
 function ownerActions(spot) {
   const row = el('div', 'owner-actions');
 
-  const edit = el('button', 'owner-action edit', 'Edit');
+  const edit = el('button', 'owner-action edit', t('edit'));
   edit.type = 'button';
   edit.addEventListener('click', () => onEditClick(spot));
   row.append(edit);
 
-  const del = el('button', 'owner-action delete', 'Delete');
+  const del = el('button', 'owner-action delete', t('delete'));
   del.type = 'button';
   del.addEventListener('click', () => {
-    if (window.confirm("Delete this spot? This can't be undone.")) onDeleteClick(spot);
+    if (window.confirm(t('confirmDelete'))) onDeleteClick(spot);
   });
   row.append(del);
 
@@ -147,7 +147,7 @@ function ownerActions(spot) {
 function emptyState(message) {
   const box = el('div', 'empty');
   box.append(el('p', 'empty-text', message));
-  const add = el('button', 'button primary', '+ Add a repair spot');
+  const add = el('button', 'button primary', t('addSpot'));
   add.type = 'button';
   add.addEventListener('click', () => onAddClick());
   box.append(add);

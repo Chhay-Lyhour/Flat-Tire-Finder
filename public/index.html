@@ -7,86 +7,89 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23111418'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23F26A1B'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+Khmer:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="map" aria-label="Map of repair spots"></div>
+  <div id="map" aria-label="Map of repair spots" data-i18n-aria-label="mapLabel"></div>
 
-  <nav class="vehicle-filter" role="group" aria-label="My vehicle">
-    <button type="button" class="vehicle-option" data-vehicle="moto">🏍️ Moto</button>
-    <button type="button" class="vehicle-option" data-vehicle="tuktuk">🛺 Tuk-tuk</button>
-    <button type="button" class="vehicle-option" data-vehicle="car">🚗 Car</button>
+  <nav class="vehicle-filter" role="group" aria-label="My vehicle" data-i18n-aria-label="myVehicle">
+    <button type="button" class="vehicle-option" data-vehicle="moto" data-i18n="motoLabel">🏍️ Moto</button>
+    <button type="button" class="vehicle-option" data-vehicle="tuktuk" data-i18n="tuktukLabel">🛺 Tuk-tuk</button>
+    <button type="button" class="vehicle-option" data-vehicle="car" data-i18n="carLabel">🚗 Car</button>
   </nav>
+
+  <button id="lang-toggle" class="lang-toggle" type="button"
+          aria-label="Switch to Khmer" data-i18n-aria-label="switchLangLabel" data-i18n="switchLang">ខ្មែរ</button>
 
   <div id="status" class="status" role="status" hidden>
     <span id="status-text"></span>
-    <button id="status-retry" class="status-retry" type="button" hidden>Retry</button>
+    <button id="status-retry" class="status-retry" type="button" hidden data-i18n="retry">Retry</button>
   </div>
 
-  <button id="add-button" class="add-button" type="button">+ Add a repair spot</button>
+  <button id="add-button" class="add-button" type="button" data-i18n="addSpot">+ Add a repair spot</button>
 
-  <section id="panel" class="sheet panel" hidden aria-label="Repair shops">
+  <section id="panel" class="sheet panel" hidden aria-label="Repair shops" data-i18n-aria-label="repairShops">
     <button id="panel-handle" class="panel-handle" type="button" aria-expanded="false" aria-controls="shop-list">
       <span class="grip" aria-hidden="true"></span>
-      <span id="panel-handle-label">Show all shops</span>
+      <span id="panel-handle-label" data-i18n="showAllShops">Show all shops</span>
     </button>
     <div id="nearest"></div>
     <ol id="shop-list" class="shop-list"></ol>
   </section>
 
   <form id="add-form" class="sheet add-form" hidden novalidate>
-    <h2 id="form-title" class="sheet-title">Add a repair spot</h2>
+    <h2 id="form-title" class="sheet-title" data-i18n="addTitle">Add a repair spot</h2>
 
     <label class="field" id="name-field">
-      <span class="field-label">Name</span>
+      <span class="field-label" data-i18n="name">Name</span>
       <input id="spot-name" type="text" maxlength="100" autocomplete="off"
-             placeholder="e.g. Roadside stall near Chbar Ampov bridge">
-      <span class="field-error">Add a name</span>
+             placeholder="e.g. Roadside stall near Chbar Ampov bridge" data-i18n-placeholder="namePlaceholder">
+      <span class="field-error" data-i18n="nameError">Add a name</span>
     </label>
 
     <fieldset class="field" id="vehicle-field">
-      <legend class="field-label">Fixes</legend>
+      <legend class="field-label" data-i18n="fixes">Fixes</legend>
       <div class="chips">
-        <label class="chip"><input type="checkbox" name="vehicle" value="moto"><span>🏍️ Moto</span></label>
-        <label class="chip"><input type="checkbox" name="vehicle" value="tuktuk"><span>🛺 Tuk-tuk</span></label>
-        <label class="chip"><input type="checkbox" name="vehicle" value="car"><span>🚗 Car</span></label>
+        <label class="chip"><input type="checkbox" name="vehicle" value="moto"><span data-i18n="motoLabel">🏍️ Moto</span></label>
+        <label class="chip"><input type="checkbox" name="vehicle" value="tuktuk"><span data-i18n="tuktukLabel">🛺 Tuk-tuk</span></label>
+        <label class="chip"><input type="checkbox" name="vehicle" value="car"><span data-i18n="carLabel">🚗 Car</span></label>
       </div>
-      <span class="field-error">Add at least one vehicle type</span>
+      <span class="field-error" data-i18n="vehicleError">Add at least one vehicle type</span>
     </fieldset>
 
     <div class="field" id="price-field">
-      <label class="field-label" for="spot-price">Puncture price (optional)</label>
+      <label class="field-label" for="spot-price" data-i18n="price">Puncture price (optional)</label>
       <div class="price-row">
         <input id="spot-price" type="number" inputmode="decimal" min="0" step="any" placeholder="5000">
-        <div class="currency" role="group" aria-label="Currency">
-          <button type="button" class="currency-option is-selected" data-currency="KHR" aria-pressed="true">៛ Riel</button>
-          <button type="button" class="currency-option" data-currency="USD" aria-pressed="false">$ Dollar</button>
+        <div class="currency" role="group" aria-label="Currency" data-i18n-aria-label="currency">
+          <button type="button" class="currency-option is-selected" data-currency="KHR" aria-pressed="true" data-i18n="riel">៛ Riel</button>
+          <button type="button" class="currency-option" data-currency="USD" aria-pressed="false" data-i18n="dollar">$ Dollar</button>
         </div>
       </div>
-      <span class="field-error">The price must be a positive number</span>
+      <span class="field-error" data-i18n="priceError">The price must be a positive number</span>
     </div>
 
     <label class="field" id="phone-field">
-      <span class="field-label">Phone number (optional)</span>
+      <span class="field-label" data-i18n="phone">Phone number (optional)</span>
       <input id="spot-phone" type="tel" maxlength="20" autocomplete="off" placeholder="012 345 678">
-      <span class="field-hint">So a driver who can't get there can call you to come find them.</span>
-      <span class="field-error">Enter a valid phone number</span>
+      <span class="field-hint" data-i18n="phoneHint">So a driver who can't get there can call you to come find them.</span>
+      <span class="field-error" data-i18n="phoneError">Enter a valid phone number</span>
     </label>
 
     <p id="form-message" class="form-message" role="alert"></p>
 
     <div id="form-actions" class="form-actions">
-      <button type="button" id="cancel-add" class="button secondary">Cancel</button>
-      <button type="submit" id="save-spot" class="button primary" disabled>Save</button>
+      <button type="button" id="cancel-add" class="button secondary" data-i18n="cancel">Cancel</button>
+      <button type="submit" id="save-spot" class="button primary" disabled data-i18n="save">Save</button>
     </div>
 
     <div id="duplicate-confirm" class="form-actions duplicate" hidden>
-      <p class="duplicate-text">A repair spot is already here. Add anyway?</p>
-      <button type="button" id="duplicate-no" class="button secondary">Cancel</button>
-      <button type="button" id="duplicate-yes" class="button primary">Add anyway</button>
+      <p class="duplicate-text" data-i18n="duplicate">A repair spot is already here. Add anyway?</p>
+      <button type="button" id="duplicate-no" class="button secondary" data-i18n="cancel">Cancel</button>
+      <button type="button" id="duplicate-yes" class="button primary" data-i18n="addAnyway">Add anyway</button>
     </div>
   </form>
 

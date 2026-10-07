@@ -1,7 +1,5 @@
 // The Moto / Tuk-tuk / Car buttons. One is always selected; Moto by default.
 
-export const VEHICLE_NAMES = { moto: 'Moto', tuktuk: 'Tuk-tuk', car: 'Car' };
-
 const buttons = [...document.querySelectorAll('.vehicle-option')];
 
 export function initFilter({ initial, onChange }) {

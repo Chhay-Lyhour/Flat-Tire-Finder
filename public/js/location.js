@@ -2,7 +2,7 @@
 
 const TIMEOUT_MS = 10000;
 
-// callbacks: { onFound(point), onFallback(), showStatus(message) }
+// callbacks: { onFound(point), onFallback(), showStatus(key) } — keys are from i18n.js.
 // onFound can still fire after onFallback if the driver allows location late;
 // app.js ignores it once a location has been tapped.
 export async function locateDriver({ onFound, onFallback, showStatus }) {
@@ -16,13 +16,13 @@ export async function locateDriver({ onFound, onFallback, showStatus }) {
   };
 
   // Before the driver answers the browser's popup, explain why we're asking.
-  showStatus('Finding you...');
+  showStatus('findingYou');
   try {
     const permission = await navigator.permissions?.query({ name: 'geolocation' });
     if (permission?.state === 'prompt') {
-      showStatus('Allow location so we can find the nearest repair shop.');
+      showStatus('allowLocation');
       permission.onchange = () => {
-        if (permission.state === 'granted' && !settled) showStatus('Finding you...');
+        if (permission.state === 'granted' && !settled) showStatus('findingYou');
       };
     }
   } catch {
@@ -45,7 +45,7 @@ export async function locateDriver({ onFound, onFallback, showStatus }) {
   );
 
   function fallBack() {
-    showStatus('Tap the map to set where you are.');
+    showStatus('tapToSetLocation');
     onFallback();
   }
 }

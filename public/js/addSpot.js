@@ -4,6 +4,7 @@ import { createSpot, updateSpot } from './api.js';
 import { getOwnerToken, rememberOwner } from './ownership.js';
 import { showDraftPin, clearDraftPin } from './map.js';
 import { findNearby } from './geo.js';
+import { setText } from './i18n.js';
 
 const DUPLICATE_RADIUS_M = 30;
 
@@ -36,7 +37,7 @@ let editingId = null;
 const touched = new Set();
 let deps;
 
-// deps: { getSpots(), onSaved(spot), onUpdated(spot), showStatus(message), onClosed() }
+// deps: { getSpots(), onSaved(spot), onUpdated(spot), showStatus(key), onClosed() } — keys are from i18n.js.
 export function initAddSpot(dependencies) {
   deps = dependencies;
 
@@ -75,7 +76,7 @@ export function startAdding() {
   placing = true;
   document.body.classList.add('is-adding');
   addButton.hidden = true;
-  deps.showStatus('Tap the map where the stall is.');
+  deps.showStatus('tapWhereStall');
 }
 
 // Called by panel.js when a driver taps Edit on a spot they added.
@@ -85,8 +86,8 @@ export function startEditing(spot) {
   point = { lat: spot.lat, lng: spot.lng };
   document.body.classList.add('is-adding');
   addButton.hidden = true;
-  formTitle.textContent = 'Edit repair spot';
-  saveButton.textContent = 'Save changes';
+  setText(formTitle, 'editTitle');
+  setText(saveButton, 'saveChanges');
 
   nameInput.value = spot.name;
   vehicleInputs.forEach((input) => (input.checked = spot.vehicles.includes(input.value)));
@@ -96,7 +97,7 @@ export function startEditing(spot) {
 
   showDraftPin(point);
   form.hidden = false;
-  deps.showStatus('Tap the map to move the pin, or save as is.');
+  deps.showStatus('tapToMovePin');
   update();
 }
 
@@ -107,10 +108,10 @@ function stopAdding() {
   editingId = null;
   form.reset();
   setCurrency('KHR');
-  formTitle.textContent = 'Add a repair spot';
-  saveButton.textContent = 'Save';
+  setText(formTitle, 'addTitle');
+  setText(saveButton, 'save');
   touched.clear();
-  formMessage.textContent = '';
+  setText(formMessage, null);
   showDuplicatePrompt(false);
   form.hidden = true;
   document.body.classList.remove('is-adding');
@@ -133,7 +134,7 @@ function setCurrency(next) {
 
 function touch(field) {
   touched.add(field);
-  formMessage.textContent = '';
+  setText(formMessage, null);
   update();
 }
 
@@ -200,7 +201,7 @@ async function save() {
   const wasEditing = editingId;
   showDuplicatePrompt(false);
   saving = true;
-  saveButton.textContent = 'Saving…';
+  setText(saveButton, 'saving');
   update();
   try {
     if (wasEditing) {
@@ -208,21 +209,21 @@ async function save() {
       saving = false;
       stopAdding();
       deps.onUpdated(saved);
-      deps.showStatus('Spot updated', 2500);
+      deps.showStatus('spotUpdated', 2500);
     } else {
       const { owner_token, ...saved } = await createSpot(payload);
       rememberOwner(saved.id, owner_token);
       saving = false;
       stopAdding();
       deps.onSaved(saved);
-      deps.showStatus('Spot added', 2500);
+      deps.showStatus('spotAdded', 2500);
     }
   } catch (error) {
     // Keep everything the driver typed so they can simply try again.
     console.error(error);
     saving = false;
-    saveButton.textContent = wasEditing ? 'Save changes' : 'Save';
-    formMessage.textContent = "Couldn't save. Try again.";
+    setText(saveButton, wasEditing ? 'saveChanges' : 'save');
+    setText(formMessage, 'saveFailed');
     update();
   }
 }
